@@ -3349,7 +3349,7 @@ void TCling::UpdateListOfLoadedSharedLibraries()
       ++imageIndex;
    }
    fPrevLoadedDynLibInfo = (void*)(size_t)imageIndex;
-#elif defined(R__LINUX) || defined(R__FBSD)
+#elif defined(R__LINUX)
    // fPrevLoadedDynLibInfo is unused on Linux.
    (void) fPrevLoadedDynLibInfo;
 
@@ -3357,6 +3357,8 @@ void TCling::UpdateListOfLoadedSharedLibraries()
    dl_iterate_phdr(callback_for_dl_iterate_phdr, &newLibs);
    for (auto &&lib: newLibs)
       RegisterLoadedSharedLibrary(lib.c_str());
+#elif defined(R__FBSD)
+   //do nothing
 #else
    Error("TCling::UpdateListOfLoadedSharedLibraries",
          "Platform not supported!");
