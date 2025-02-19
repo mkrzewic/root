@@ -42,6 +42,9 @@
 #ifdef R__MACOSX
 #include <sys/wait.h>
 #include <crt_externs.h>
+#elif defined(__FreeBSD__)
+#include <sys/wait.h>
+#include <dlfcn.h>
 #else
 #include <wait.h>
 #endif
@@ -354,6 +357,10 @@ RWebDisplayHandle::BrowserCreator::Display(const RWebDisplayArgs &args)
 
 #ifdef R__MACOSX
       char **envp = *_NSGetEnviron();
+#elif defined (__FreeBSD__)
+      //this is needed because the FreeBSD linker does not like to resolve these special symbols
+      //in shared libs with -Wl,--no-undefined
+      char** envp = (char**)dlsym(RTLD_DEFAULT, "environ");
 #else
       char **envp = environ;
 #endif
